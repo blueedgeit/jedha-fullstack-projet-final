@@ -10,13 +10,6 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
-      # Config pour plugin WP Offload Media vers MinIO https://wordpress.org/plugins/amazon-s3-and-cloudfront/
-      S3_UPLOADS_BUCKET: wordpress
-      S3_UPLOADS_KEY: minioadmin
-      S3_UPLOADS_SECRET: minioadmin
-      S3_UPLOADS_REGION: us-east-1
-      S3_UPLOADS_ENDPOINT: http://minio:9000
-      S3_UPLOADS_USE_PATH_STYLE: "true"
     networks:
       - wp_network
   nginx:
