@@ -2,26 +2,30 @@ services:
   # Wordpress App
   wordpress:
     image: wordpress:6.9.0-php8.5
-    container_name: wordpress_app
-    hostname: wordpress_app
-    restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wp_admin
+      WORDPRESS_DB_PASSWORD: 5HrgP$Y3LUfZ
+      WORDPRESS_DB_NAME: secondbyte_app
     networks:
       - wp_network
+    volumes:
+      - wp-data:/var/www/html
+    deploy:
+      replicas: 2                
+      restart_policy:
+        condition: any
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
   nginx:
     image: owasp/modsecurity-crs:3.3.8-nginx-202601060501
-    container_name: modsec_nginx
     restart: always
-    ports:
-      - "8080:8080"
-      - "443:8443"
     environment:
       SERVERNAME: localhost
-      BACKEND: http://wordpress_app:80
+      BACKEND: http://wordpress:80
       #############################################
       # CRS Variables
       #############################################
@@ -76,10 +80,19 @@ services:
       #######################################################
       - ./nginx/.ssh/server.crt:/usr/local/apache2/conf/server.crt
       - ./nginx/.ssh/server.key:/usr/local/apache2/conf/server.key
-
-    depends_on:
-      - wordpress
+    deploy:
+      replicas: 2                         
+      restart_policy:
+        condition: any
+    ports:
+      - target: 8443
+        published: 443
+        protocol: tcp
+        mode: vip
     networks:
       - wp_network
+volumes:
+  wp-data:
 networks:
   wp_network:
+    driver: overlay
