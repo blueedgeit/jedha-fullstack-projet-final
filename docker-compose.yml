@@ -1,7 +1,7 @@
 services:
   # Wordpress App
   wordpress:
-    image: wordpress:6.9.0-php8.5
+    image: wordpress:6.4.3-php8.2
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wp_admin
